@@ -4,7 +4,7 @@ import audioop
 import whisper
 import os
 import clipboard
-
+rate = 512
 def record_audio(filename):
     p = pyaudio.PyAudio()
 
@@ -12,24 +12,24 @@ def record_audio(filename):
                     channels=1,
                     rate=16000,
                     input=True,
-                    frames_per_buffer=1024)
+                    frames_per_buffer=int(1024/rate))
 
     frames = []
     silence_frames = 0
     print('Recording...\n')
     try:
         while True:
-            data = stream.read(1024)
+            data = stream.read(int(1024/rate))
             rms = audioop.rms(data, 2)
-            if rms < 150:
+            if rms < 200:
                 silence_frames += 1
-                if silence_frames > 128:
+                if silence_frames > 128*rate:
                     print('\nSilence detected, stopping recording.')
                     break
             else:
                 silence_frames = 0
             print(" "*80, end="\r")
-            print("▓" * max(min(int((rms-50)/20), 80), 0) + "░" * max(80-max(int((rms-50)/20), 0), 0)
+            print("#" * max(min(int((rms-50)/20), 80), 0) + "-" * max(80-max(int((rms-50)/20), 0), 0)
                   + " | " + str(rms) + " | " + str(silence_frames), end="")
 
             frames.append(data)
