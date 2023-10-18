@@ -58,7 +58,21 @@ path = os.path.abspath(audio_file)
 result = model.transcribe(path)
 
 text_file = audio_file + ".txt"
+ttext = result['text']
+likeometer = 0
+text = ""
+for i in ttext.split():
+    if not i.lower().find("like"):
+        likeometer += 5
+        if likeometer <= 5:
+            text = text + " " + i
+        elif i.find("."):
+            text = text+"."
+    else:
+        likeometer -= 1
+        likeometer = max(likeometer, 0)
+        text = text + " " + i
 with open(text_file, "w") as file:
-    file.write(result["text"])
-clipboard.copy(result["text"])
+    file.write(text)
+clipboard.copy(text)
 print(f'Transcription saved to {text_file} and to your clipboard')
