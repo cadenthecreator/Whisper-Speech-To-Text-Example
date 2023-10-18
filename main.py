@@ -21,7 +21,7 @@ def record_audio(filename):
         while True:
             data = stream.read(int(1024/rate))
             rms = audioop.rms(data, 2)
-            if rms < 200:
+            if rms < 300:
                 silence_frames += 1
                 if silence_frames > 128*rate:
                     print('\nSilence detected, stopping recording.')
